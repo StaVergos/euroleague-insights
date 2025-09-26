@@ -9,8 +9,8 @@ from src.euroleague.schemas.clubs import ClubResponse
 
 
 class EuroleagueAPI:
-    def __init__(self):
-        self.client = httpx.Client()
+    def __init__(self, client: httpx.AsyncClient) -> None:
+        self.client = client
 
     @property
     def api_v2(self) -> str:
@@ -55,8 +55,8 @@ class EuroleagueAPI:
             f"/Boxscore?gamecode={game_code}&seasoncode={season_code}"
         )
 
-    def get_clubs(self) -> ClubResponse:
-        resp = self.client.get(self.euroleague_2024_clubs_url)
+    async def get_clubs(self) -> ClubResponse:
+        resp = await self.client.get(self.euroleague_2024_clubs_url)
         resp.raise_for_status()
 
         result = resp.json()

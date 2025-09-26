@@ -1,9 +1,10 @@
-from src.euroleague.schemas.clubs import Club, DTOClub
 from src.euroleague.api import EuroleagueAPI
+from src.euroleague.schemas.clubs import Club, DTOClub
 
 
 class EuroleagueService:
-    api = EuroleagueAPI()
+    def __init__(self, api: EuroleagueAPI) -> None:
+        self.api = api
 
     def normalize_club_data(self, clubs: list[Club]) -> list[DTOClub]:
         dto_clubs = []
@@ -21,6 +22,6 @@ class EuroleagueService:
             dto_clubs.append(dto_club)
         return dto_clubs
 
-    def get_clubs(self) -> list[DTOClub]:
-        club_response = self.api.get_clubs()
+    async def get_clubs(self) -> list[DTOClub]:
+        club_response = await self.api.get_clubs()
         return self.normalize_club_data(club_response.data)

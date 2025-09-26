@@ -1,9 +1,22 @@
-from fastapi import FastAPI, Depends
+from contextlib import asynccontextmanager
+
+import httpx
+from fastapi import Depends, FastAPI
 
 from src.euroleague.schemas.clubs import DTOClub
-from src.euroleague.service import EuroleagueService
+from src.framework.dependencies import get_euroleague_service
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.http = httpx.AsyncClient(timeout=10)
+    try:
+        yield
+    finally:
+        await app.state.http.aclose()
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/health")
@@ -16,6 +29,6 @@ def main():
     return "Hello World"
 
 
-@app.get("/clubs")
-def get_clubs(euroleague_service=Depends(EuroleagueService)) -> list[DTOClub]:
-    return euroleague_service.get_clubs()
+@app.get("/clubs", response_model=list[DTOClub])
+async def get_clubs(service=Depends(get_euroleague_service)):
+    return await service.get_clubs()
