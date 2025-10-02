@@ -4,7 +4,7 @@ import httpx
 from fastapi import Depends, FastAPI
 
 from src.euroleague.schemas.clubs import DTOClub
-from src.framework.dependencies import get_euroleague_service
+from src.core.dependencies import get_euroleague_service
 
 
 @asynccontextmanager
