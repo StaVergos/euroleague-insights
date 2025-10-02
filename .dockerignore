@@ -1,11 +1,37 @@
-.git
+# Python
+.venv/
+venv/
 __pycache__/
 *.pyc
 *.pyo
-.env
-.node_modules/
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node/JS (if any)
+node_modules/
+
+# Build artifacts
 dist/
 build/
-.cache/
-.vscode/
+*.egg-info/
+
+# VCS & editor
+.git/
+.gitignore
 .idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage & logs
+.coverage
+htmlcov/
+*.log
+
+# Secrets/config you don't want baked into the image
+.env
+.env.*
