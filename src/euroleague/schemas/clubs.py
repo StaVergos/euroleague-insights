@@ -41,8 +41,8 @@ class Club(BaseModel):
             "Mahmutbey Mahallesi Ordu Caddesi 2581. Sokak No:3 - Bagcılar 34218 Istanbul "
         ]
     )
-    website: HttpUrl = Field(examples=["https://www.anadoluefessk.org/"])
-    tickets_url: HttpUrl = Field(
+    website: str = Field(examples=["https://www.anadoluefessk.org/"])
+    tickets_url: str = Field(
         validation_alias="ticketsUrl",
         examples=["https://www.anadoluefessk.org/en/tickets"],
     )
@@ -53,21 +53,6 @@ class Club(BaseModel):
     city: str = Field(examples=["ISTANBUL"])
     president: str = Field(examples=["Tuncay Ozilhan"])
     phone: str = Field(examples=["+90 212 449 38 84"])
-
-
-class DTOClub(BaseModel):
-    code: str = Field(min_length=3, max_length=3, examples=["EFS"])
-    name: str = Field(examples=["Anadolu Efes Istanbul"])
-    crest_image: HttpUrl = Field(
-        examples=[
-            "https://media-cdn.cortextech.io/9a463aa2-ceb2-481c-9a95-1cddee0a248e.png"
-        ]
-    )
-    original_name: str = Field(examples=["Anadolu Efes Istanbul"])
-    original_alias: str = Field(examples=["Anadolu Efes"])
-    country_code: str = Field(min_length=3, max_length=3, examples=["TUR"])
-    city: str = Field(examples=["Istanbul"])
-    venue_code: str = Field(examples=["AVG"])
 
 
 class ClubResponse(BaseModel):

@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import Depends, FastAPI
 
-from src.euroleague.schemas.clubs import DTOClub
-from src.core.dependencies import get_euroleague_service
+from src.insights.schemas import DTOClub
+from src.core.dependencies import get_insights_service
 
 
 @asynccontextmanager
@@ -30,5 +30,10 @@ def main():
 
 
 @app.get("/clubs", response_model=list[DTOClub])
-async def get_clubs(service=Depends(get_euroleague_service)):
+async def get_clubs(service=Depends(get_insights_service)):
     return await service.get_clubs()
+
+
+@app.get("/clubs_from_euroleague", response_model=list[DTOClub])
+async def get_clubs_from_euroleague(service=Depends(get_insights_service)):
+    return await service.get_clubs_from_euroleague()
