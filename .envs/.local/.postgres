@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=euroleague_insights
+POSTGRES_USER=LHrNCkSAVeMgOSFiWBsjTLZHjBUueUAC
+POSTGRES_PASSWORD=L8J72NzyewauntbIRoMQo1G333L9XSIDy3178vlfK1mOgolkXY45bqpKtRsLCnd6
