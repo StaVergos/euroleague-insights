@@ -6,6 +6,5 @@ from euroleague_insights.euroleague.tasks import insert_clubs
 logger = logging.getLogger(__name__)
 
 
-def list_clubs(season_code="E2024"):
-    insert_clubs.delay(season_code=season_code)
+def list_clubs():
     return Club.objects.all()

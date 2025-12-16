@@ -11,6 +11,6 @@ class ListClubsView(APIView):
     """
 
     def get(self, request):
-        clubs = list_clubs(season_code="E2024")
+        clubs = list_clubs()
         serializer = ClubSerializer(clubs, many=True)
         return Response(serializer.data)
