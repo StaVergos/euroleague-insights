@@ -28,7 +28,19 @@ class EuroleagueAPI:
             f"/seasons/{season_code.value}/clubs"
         )
 
+    def euroleague_players_url(self, season_code: SeasonCode) -> str:
+        return (
+            f"{self.api_v2}"
+            f"/competitions/{CompetitionCode.EUROLEAGUE.value}"
+            f"/seasons/{season_code.value}/people"
+        )
+
     def get_clubs(self, season: SeasonCode):
         response = self.client.get(self.euroleague_clubs_url(season))
+        response.raise_for_status()
+        return response.json()
+
+    def get_players(self, season: SeasonCode):
+        response = self.client.get(self.euroleague_players_url(season))
         response.raise_for_status()
         return response.json()
