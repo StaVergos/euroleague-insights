@@ -24,8 +24,8 @@ class Player(models.Model):
     jersey_name = models.CharField(max_length=50, blank=True)
     country_code = models.CharField(max_length=3)
     country_name = models.CharField(max_length=100)
-    height = models.IntegerField(nullable=True)
-    weight = models.IntegerField(nullable=True)
+    height = models.IntegerField(null=True)
+    weight = models.IntegerField(null=True)
     birth_date = models.DateField(blank=True)
 
     def __str__(self):
