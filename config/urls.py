@@ -9,6 +9,8 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from euroleague_insights.euroleague.urls import urlpatterns as euroleague_urls
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -40,6 +42,8 @@ urlpatterns += [
         name="api-docs",
     ),
 ]
+
+urlpatterns += euroleague_urls
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
