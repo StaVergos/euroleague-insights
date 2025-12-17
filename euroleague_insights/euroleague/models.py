@@ -21,12 +21,12 @@ class Player(models.Model):
     fullname = models.CharField(max_length=50)
     passport_name = models.CharField(max_length=50, blank=True)
     passport_surname = models.CharField(max_length=50, blank=True)
-    jersey_name = models.CharField(max_length=50, blank=True)
+    jersey_name = models.CharField(max_length=50, nullable=True)
     country_code = models.CharField(max_length=3)
     country_name = models.CharField(max_length=100)
     height = models.IntegerField(null=True)
     weight = models.IntegerField(null=True)
-    birth_date = models.DateField(blank=True)
+    birth_date = models.DateTimeField(blank=True)
 
     def __str__(self):
         return self.fullname
