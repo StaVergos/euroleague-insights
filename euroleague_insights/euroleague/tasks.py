@@ -42,12 +42,13 @@ def insert_players(season_code):
     logger.info("Fetched %d players for season %s", len(players_data), season_code)
     for new_player in players_data:
         logger.info("Processing player: %s", new_player)
-        new_player_person = new_player.get("person", {})
+        new_player_person = new_player.get("person") or {}
         country = new_player_person.get("country") or {}
         country_code = country.get("code", "")
         country_name = country.get("name", "")
         Player.objects.update_or_create(
-            default={
+            code=new_player_person.get("code", ""),
+            defaults={
                 "fullname": new_player_person.get("name", ""),
                 "passport_name": new_player_person.get("passportName", ""),
                 "passport_surname": new_player_person.get("passportSurname", ""),
