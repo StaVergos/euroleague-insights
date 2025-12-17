@@ -3,7 +3,6 @@ import logging
 from celery import shared_task
 
 from euroleague_insights.euroleague.euroleague_api.api import EuroleagueAPI
-from euroleague_insights.euroleague.euroleague_api.constants import SeasonCode
 from euroleague_insights.euroleague.models import Club
 from euroleague_insights.euroleague.models import Player
 
@@ -12,9 +11,8 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def insert_clubs(season_code):
-    api = EuroleagueAPI()
-    season = SeasonCode(season_code)
-    clubs_data = api.get_clubs(season).get("data", [])
+    api = EuroleagueAPI(season=season_code)
+    clubs_data = api.get_clubs().get("data", [])
     logger.info("Fetched %d clubs for season %s", len(clubs_data), season_code)
     for club_datum in clubs_data:
         logger.info("Processing club: %s", club_datum)
@@ -36,9 +34,8 @@ def insert_clubs(season_code):
 
 @shared_task()
 def insert_players(season_code):
-    api = EuroleagueAPI()
-    season = SeasonCode(season_code)
-    players_data = api.get_players(season).get("data", [])
+    api = EuroleagueAPI(season=season_code)
+    players_data = api.get_players().get("data", [])
     logger.info("Fetched %d players for season %s", len(players_data), season_code)
     for new_player in players_data:
         logger.info("Processing player: %s", new_player)
