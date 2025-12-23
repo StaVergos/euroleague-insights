@@ -83,18 +83,18 @@ See detailed [cookiecutter-django Docker documentation](https://cookiecutter-dja
 
 1. export COMPOSE_FILE=local.yml
     1. otherwise use -f local.yml on docker-compose.
-    2. example: docker-compose -f local.yml up --build -d
+    2. example: docker compose -f docker-compose.local.yml build --no-cache
 2. docker-compose down --rmi all --volumes
-3. docker-compose up --build -d
+3. docker compose -f docker-compose.local.yml up -d
 4. docker-compose run django sh
 5. python manage.py shell
-6. docker-compose run django python manage.py shell
+6. docker compose -f docker-compose.local.yml run --rm django python manage.py shell
     1. Opens a shell inside django container
-7. docker-compose run django python manage.py showmigrations cards
+7. docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
     1. Shows all the migrations that apply
     2. It has a box [] for each migration made
     3. It has a checked box [x] for each migration applied
-8. docker-compose run django python manage.py makemigrations cards
+8. docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations
     1. Mades the migration
 9. docker-compose run django python manage.py migrate cards
     1. Applies the migration
@@ -105,5 +105,5 @@ See detailed [cookiecutter-django Docker documentation](https://cookiecutter-dja
 12. docker-compose -f local.yml logs --tail=100 -f celeryworker
 13. docker-compose run django python manage.py create_init_users
 14. docker-compose exec postgres psql -U "username"
-15. docker-compose run django python manage.py createsuperuser
+15. docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
 16. docker-compose run django bash + pytest -W ignore
