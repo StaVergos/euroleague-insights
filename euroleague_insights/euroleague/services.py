@@ -7,8 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 def list_clubs():
-    return Club.objects.all()
+    return Club.objects.order_by("id")
 
 
 def list_players():
-    return Player.objects.all()
+    return Player.objects.order_by("id")
