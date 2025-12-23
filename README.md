@@ -90,13 +90,13 @@ See detailed [cookiecutter-django Docker documentation](https://cookiecutter-dja
 5. python manage.py shell
 6. docker compose -f docker-compose.local.yml run --rm django python manage.py shell
     1. Opens a shell inside django container
-7. docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
+7. docker compose -f docker-compose.local.yml run --rm django python manage.py showmigrations
     1. Shows all the migrations that apply
     2. It has a box [] for each migration made
     3. It has a checked box [x] for each migration applied
 8. docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations
     1. Mades the migration
-9. docker-compose run django python manage.py migrate cards
+9. docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
     1. Applies the migration
 10. docker-compose -f local.yml logs --tail=100  django
     1. to read the 100 last lines of django logs
