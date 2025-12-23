@@ -46,11 +46,11 @@ class EuroleagueAPI:
         response.raise_for_status()
         return response.json()
 
-    def get_player_details_url(self, person_code: str):
+    def get_player_details_url(self):
         url = (
             f"{self.api_v2}"
             f"/competitions/{CompetitionCode.EUROLEAGUE.value}"
-            f"/people/{person_code}"
+            f"/seasons/{self.season.value}"
         )
         response = self.client.get(url)
         response.raise_for_status()
