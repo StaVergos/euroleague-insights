@@ -58,38 +58,23 @@ def insert_players(season_code):
             },
         )
 
-        try:
-            person_code = new_player_person.get("code", "")
-            if person_code:
-                sync_players_current_club.delay(season_code)
-        except Exception:
-            logger.exception(
-                "Failed to schedule sync for player %s",
-                new_player_person.get("code", ""),
-            )
-
 
 @shared_task()
 def sync_players_current_club(season_code):
     api = EuroleagueAPI(season=season_code)
-    player_data = api.get_player_details_url().get("data", [])
-    logger.info(
-        "Fetched player details: %s",
-        player_data,
-    )
-    for club_player in player_data:
-        logger.info("Processing club player: %s", club_player)
-        new_player_person = club_player.get("person") or {}
-        new_player_club = club_player.get("club") or {}
-        club_obj = Club.objects.update_or_create(
-            code=new_player_club.get("code", ""),
-            defaults={
-                "name": new_player_club.get("name", ""),
-            },
-        )
-        Player.objects.update_or_create(
-            code=new_player_person.get("code", ""),
-            defaults={
-                "current_club": club_obj,
-            },
-        )
+    players_data = api.get_players().get("data", [])
+    for player_data in players_data:
+        new_player_person = player_data.get("person", {})
+        person_code = new_player_person.get("code", "")
+        if not person_code:
+            continue
+        club_data = player_data.get("club", {}) or {}
+        club_code = club_data.get("code", "")
+        if club_code:
+            club_obj, _ = Club.objects.update_or_create(
+                code=club_code,
+                defaults={"name": club_data.get("name", "")},
+            )
+            Player.objects.filter(code=person_code).update(current_club=club_obj)
+
+    logger.info("Synced current clubs for season %s", season_code)
