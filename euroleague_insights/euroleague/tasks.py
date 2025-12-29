@@ -71,10 +71,7 @@ def sync_players_current_club(season_code):
         club_data = player_data.get("club", {}) or {}
         club_code = club_data.get("code", "")
         if club_code:
-            club_obj, _ = Club.objects.update_or_create(
-                code=club_code,
-                defaults={"name": club_data.get("name", "")},
-            )
+            club_obj = Club.objects.get(code=club_code)
             Player.objects.filter(code=person_code).update(current_club=club_obj)
 
     logger.info("Synced current clubs for season %s", season_code)
