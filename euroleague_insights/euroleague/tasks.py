@@ -63,6 +63,11 @@ def insert_players(season_code):
 def sync_players_current_club(season_code):
     api = EuroleagueAPI(season=season_code)
     players_data = api.get_players().get("data", [])
+    logger.info(
+        "Synced %d players with current club for season %s",
+        len(players_data),
+        season_code,
+    )
     for player_data in players_data:
         new_player_person = player_data.get("person", {})
         person_code = new_player_person.get("code", "")
