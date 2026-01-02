@@ -98,12 +98,14 @@ See detailed [cookiecutter-django Docker documentation](https://cookiecutter-dja
     1. Mades the migration
 9. docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
     1. Applies the migration
-10. docker-compose -f local.yml logs --tail=100  django
+10. docker compose -f docker-compose.local.yml run --rm django python manage.py squashmigrations euroleague XXXX(migration number)
+    1. Remove unecessary migrations
+11. docker-compose -f local.yml logs --tail=100  django
     1. to read the 100 last lines of django logs
-11. docker-compose -f local.yml logs --tail=100 -f django
+12. docker-compose -f local.yml logs --tail=100 -f django
     1. to run the logs live
-12. docker-compose -f local.yml logs --tail=100 -f celeryworker
-13. docker-compose run django python manage.py create_init_users
-14. docker-compose exec postgres psql -U "username"
-15. docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
-16. docker-compose run django bash + pytest -W ignore
+13. docker-compose -f local.yml logs --tail=100 -f celeryworker
+14. docker-compose run django python manage.py create_init_users
+15. docker-compose exec postgres psql -U "username"
+16. docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
+17. docker-compose run django bash + pytest -W ignore

@@ -8,5 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Seeding clubs...")
-        insert_clubs.delay(season_code="E2024")
+        insert_clubs.delay(season_code="E2025")
         self.stdout.write(self.style.SUCCESS("Successfully seeded clubs."))

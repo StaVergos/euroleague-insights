@@ -3,6 +3,7 @@ from rest_framework.views import Response
 
 from euroleague_insights.euroleague.serializers import ClubSerializer
 from euroleague_insights.euroleague.serializers import PlayerSerializer
+from euroleague_insights.euroleague.services import list_club_players
 from euroleague_insights.euroleague.services import list_clubs
 from euroleague_insights.euroleague.services import list_players
 
@@ -25,5 +26,16 @@ class ListPlayersView(APIView):
 
     def get(self, request):
         players = list_players()
+        serializer = PlayerSerializer(players, many=True)
+        return Response(serializer.data)
+
+
+class ListClubPlayersView(APIView):
+    """
+    API view to list selected club players.
+    """
+
+    def get(self, request, club_code):
+        players = list_club_players(club_code)
         serializer = PlayerSerializer(players, many=True)
         return Response(serializer.data)
