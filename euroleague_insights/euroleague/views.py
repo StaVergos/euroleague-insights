@@ -35,7 +35,7 @@ class ListClubPlayersView(APIView):
     API view to list selected club players.
     """
 
-    def get(self, request, code):
-        players = list_club_players(code)
+    def get(self, request, club_code):
+        players = list_club_players(club_code)
         serializer = PlayerSerializer(players, many=True)
         return Response(serializer.data)

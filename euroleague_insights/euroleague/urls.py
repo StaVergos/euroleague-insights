@@ -8,7 +8,7 @@ urlpatterns = [
     path("clubs/", ListClubsView.as_view(), name="list-clubs"),
     path("players/", ListPlayersView.as_view(), name="list-players"),
     path(
-        "clubs/<str:code>/players/",
+        "clubs/<str:club_code>/players/",
         ListClubPlayersView.as_view(),
         name="list-club-players",
     ),
