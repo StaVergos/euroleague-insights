@@ -20,7 +20,7 @@ def insert_clubs(season_code):
         country_code = country.get("code", "")
         country_name = country.get("name", "")
         Club.objects.update_or_create(
-            club_code=club_datum.get("code", ""),
+            code=club_datum.get("code", ""),
             defaults={
                 "name": club_datum.get("name", ""),
                 "alias": club_datum.get("abbreviatedName", ""),
@@ -74,9 +74,9 @@ def sync_players_current_club(season_code):
         if not person_code:
             continue
         club_data = player_data.get("club", {}) or {}
-        club_code_obj = club_data.get("code", "")
-        if club_code_obj:
-            club_obj = Club.objects.get(club_code=club_code_obj)
+        club_obj = club_data.get("code", "")
+        if club_obj:
+            club_obj = Club.objects.get(code=club_obj)
             Player.objects.filter(code=person_code).update(current_club=club_obj)
 
     logger.info("Synced current clubs for season %s", season_code)
