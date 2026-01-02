@@ -20,7 +20,7 @@ def insert_clubs(season_code):
         country_code = country.get("code", "")
         country_name = country.get("name", "")
         Club.objects.update_or_create(
-            club_code=club_datum.get("tvCode", ""),
+            club_code=club_datum.get("code", ""),
             defaults={
                 "name": club_datum.get("name", ""),
                 "alias": club_datum.get("abbreviatedName", ""),
