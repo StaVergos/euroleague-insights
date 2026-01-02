@@ -1,6 +1,7 @@
 import logging
 
 from euroleague_insights.euroleague.models import Club
+from euroleague_insights.euroleague.models import Match
 from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
@@ -22,3 +23,7 @@ def list_club_players(club_code):
         return Player.objects.none()
 
     return Player.objects.filter(current_club=club).order_by("id")
+
+
+def list_matches():
+    return Match.objects.order_by("round")
