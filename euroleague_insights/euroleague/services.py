@@ -1,6 +1,7 @@
 import logging
 
-from euroleague_insights.euroleague.models import Club, Player
+from euroleague_insights.euroleague.models import Club
+from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
 

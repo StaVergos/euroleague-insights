@@ -10,5 +10,5 @@ class Command(BaseCommand):
         self.stdout.write("Syncing players current clubs...")
         sync_players_current_club.delay(season_code="E2025")
         self.stdout.write(
-            self.style.SUCCESS("Successfully synced players current clubs.")
+            self.style.SUCCESS("Successfully synced players current clubs."),
         )

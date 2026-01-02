@@ -1,15 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.views import Response
 
-from euroleague_insights.euroleague.serializers import (
-    ClubSerializer,
-    PlayerSerializer,
-)
-from euroleague_insights.euroleague.services import (
-    list_players,
-    list_club_players,
-    list_clubs,
-)
+from euroleague_insights.euroleague.serializers import ClubSerializer
+from euroleague_insights.euroleague.serializers import PlayerSerializer
+from euroleague_insights.euroleague.services import list_club_players
+from euroleague_insights.euroleague.services import list_clubs
+from euroleague_insights.euroleague.services import list_players
 
 
 class ListClubsView(APIView):
