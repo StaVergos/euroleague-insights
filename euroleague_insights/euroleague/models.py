@@ -36,3 +36,25 @@ class Player(models.Model):
 
     def __str__(self):
         return self.fullname
+
+
+class Match(models.Model):
+    id = models.AutoField(primary_key=True)
+    match_id = models.CharField(max_length=100)
+    gamecode = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=100)
+    phase = models.CharField(max_length=20)
+    round = models.IntegerField(null=True, default=None)
+    utc_date = models.DateTimeField()
+    local_timezone = models.IntegerField()
+    home_team_code = models.CharField(max_length=3)
+    away_team_code = models.CharField(max_length=3)
+    home_team = models.CharField(max_length=50)
+    away_team = models.CharField(max_length=50)
+    home_score = models.IntegerField(null=True, default=None)
+    away_score = models.IntegerField(null=True, default=None)
+    venue_name = models.CharField(max_length=100)
+    audience = models.IntegerField(null=True, default=None)
+
+    def __str__(self):
+        return self.match_id
