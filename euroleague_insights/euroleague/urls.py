@@ -1,5 +1,6 @@
 from django.urls import path
 
+from euroleague_insights.euroleague.views import ListClubMatchesView
 from euroleague_insights.euroleague.views import ListClubPlayersView
 from euroleague_insights.euroleague.views import ListClubsView
 from euroleague_insights.euroleague.views import ListMatchesView
@@ -14,4 +15,9 @@ urlpatterns = [
         name="list-club-players",
     ),
     path("matches/", ListMatchesView.as_view(), name="list-matches"),
+    path(
+        "matches/<str:club_code>/",
+        ListClubMatchesView.as_view(),
+        name="list-club-matches",
+    ),
 ]
