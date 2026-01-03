@@ -40,12 +40,14 @@ class Player(models.Model):
         return self.fullname
 
 
+PHASE_CHOICES = [(p.value, p.value) for p in PhaseType]
+
+
 class Match(models.Model):
     id = models.AutoField(primary_key=True)
     match_id = models.CharField(max_length=100, unique=True)
     game_code = models.IntegerField(unique=True)
     name = models.CharField(max_length=100)
-    PHASE_CHOICES = [(p.value, p.value) for p in PhaseType]
     phase = models.CharField(
         max_length=20,
         choices=PHASE_CHOICES,
