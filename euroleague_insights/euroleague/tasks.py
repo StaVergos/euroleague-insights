@@ -97,10 +97,10 @@ def insert_matches(season_code):
         Match.objects.update_or_create(
             match_id=new_match.get("id", ""),
             defaults={
-                "gamecode": new_match.get("gameCode", 0),
+                "game_code": new_match.get("gameCode", ""),
                 "name": new_match_season.get("name", ""),
                 "phase": new_match_phase_type.get("name", ""),
-                "round": new_match.get("round", 0),
+                "round": new_match.get("round", ""),
                 "utc_date": new_match.get("utcDate", ""),
                 "local_timezone": new_match.get("localTimeZone", 0),
                 "home_team_code": new_match_local.get("club", {}).get("code", ""),
