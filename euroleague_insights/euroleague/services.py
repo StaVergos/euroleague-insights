@@ -28,16 +28,16 @@ def list_club_players(club_code):
 
 
 def list_matches():
-    return Match.objects.order_by("round")
+    return Match.objects.order_by("round", "game_code")
 
 
-def list_club_matches(club_match_code):
+def list_club_matches(club_code):
     try:
-        Club.objects.get(code=club_match_code)
+        Club.objects.get(code=club_code)
     except Club.DoesNotExist:
-        logger.exception("Club with code %s does not exist", club_match_code)
+        logger.exception("Club with code %s does not exist", club_code)
         return Match.objects.none()
 
     return Match.objects.filter(
-        Q(home_team_code=club_match_code) | Q(away_team_code=club_match_code),
+        Q(home_team_code=club_code) | Q(away_team_code=club_code),
     ).order_by("round")
