@@ -4,7 +4,7 @@ from euroleague_insights.euroleague.tasks import insert_matches
 
 
 class Command(BaseCommand):
-    help = "Seed players into the database."
+    help = "Seed matches into the database."
 
     def handle(self, *args, **options):
         self.stdout.write("Seeding matches...")
