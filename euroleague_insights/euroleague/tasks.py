@@ -4,6 +4,7 @@ from celery import shared_task
 
 from euroleague_insights.euroleague.euroleague_api.api import EuroleagueAPI
 from euroleague_insights.euroleague.models import Club
+from euroleague_insights.euroleague.models import Match
 from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
@@ -80,3 +81,35 @@ def sync_players_current_club(season_code):
             Player.objects.filter(code=person_code).update(current_club=club_obj)
 
     logger.info("Synced current clubs for season %s", season_code)
+
+
+@shared_task()
+def insert_matches(season_code):
+    api = EuroleagueAPI(season=season_code)
+    matches_data = api.get_matches().get("data", [])
+    logger.info("Fetched %d matches for season %s", len(matches_data), season_code)
+    for new_match in matches_data:
+        logger.info("Processing match: %s", new_match)
+        new_match_season = new_match.get("season") or {}
+        new_match_phase_type = new_match.get("phaseType") or {}
+        new_match_local = new_match.get("local") or {}
+        new_match_road = new_match.get("road") or {}
+        Match.objects.update_or_create(
+            match_id=new_match.get("id", ""),
+            defaults={
+                "game_code": new_match.get("gameCode", ""),
+                "name": new_match_season.get("name", ""),
+                "phase": new_match_phase_type.get("name", ""),
+                "round": new_match.get("round", ""),
+                "utc_date": new_match.get("utcDate", ""),
+                "local_timezone": new_match.get("localTimeZone", 0),
+                "home_team_code": new_match_local.get("club", {}).get("code", ""),
+                "away_team_code": new_match_road.get("club", {}).get("code", ""),
+                "home_team": new_match_local.get("club", {}).get("name", ""),
+                "away_team": new_match_road.get("club", {}).get("name", ""),
+                "home_score": new_match_local.get("score", 0),
+                "away_score": new_match_road.get("score", 0),
+                "venue_name": new_match.get("venue", "").get("name", ""),
+                "audience": new_match.get("audience", 0),
+            },
+        )
