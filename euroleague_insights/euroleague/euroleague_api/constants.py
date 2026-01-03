@@ -13,6 +13,7 @@ class EuroleagueLive(StrEnum):
 
 class PhaseType(StrEnum):
     REGULAR_SEASON = "Regular Season"
+    PLAY_IN = "Play-In"
     PLAYOFFS = "Playoffs"
     FINAL_FOUR = "Final Four"
 
