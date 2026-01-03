@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
+
 
 class ClubSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -30,10 +32,10 @@ class PlayerSerializer(serializers.Serializer):
 class MatchSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     match_id = serializers.CharField(max_length=100)
-    gamecode = serializers.IntegerField(allow_null=True, default=None)
+    game_code = serializers.IntegerField()
     name = serializers.CharField(max_length=100)
-    phase = serializers.CharField(max_length=20)
-    round = serializers.IntegerField(allow_null=True, default=None)
+    phase = serializers.ChoiceField(choices=[(p.value, p.value) for p in PhaseType])
+    round = serializers.IntegerField()
     utc_date = serializers.DateTimeField()
     local_timezone = serializers.IntegerField()
     home_team_code = serializers.CharField(max_length=3)
