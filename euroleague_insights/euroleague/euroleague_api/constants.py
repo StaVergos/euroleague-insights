@@ -30,12 +30,29 @@ class SeasonCode(StrEnum):
 
 class PlayType(StrEnum):
     BEGIN_PERIOD = "BP"
+    END_PERIOD = "EP"
     JUMP_BALL = "JB"
-    THREE_POINT_FIELD_GOAL = "3FG"
-    DEFENSIVE_REBOUND = "D"
-    TWO_POINT_FIELD_GOAL = "2FG"
-    OFFENSIVE_REBOUND = "O"
+    FREE_THROW_ATTEMPT = "FTA"
+    FREE_THROW_MADE = "FTM"
+    TWO_POINT_FIELD_GOAL = "2FGA"
     TWO_POINT_FIELD_GOAL_MADE = "2FGM"
+    THREE_POINT_FIELD_GOAL_ATTEMPT = "3FGA"
+    THREE_POINT_FIELD_GOAL_MADE = "3FGM"
+    DEFENSIVE_REBOUND = "D"
+    OFFENSIVE_REBOUND = "O"
+    TURNOVER = "TO"
+    ASSIST = "AS"
+    BLOCK = "FV"
+    STEAL = "ST"
+    FOUL = "CM"
+    FOUL_DRAWN = "FV"
+    OFFENSIVE_FOUL = "OF"
+    TIMEOUT = "TOUT"
+    TV_TIMEOUT = "TOUT-TV"
+    TECHNICAL_FOUL = "CMT"
+    UNSPORTSMANLIKE_FOUL = "CMU"
+    IN = "IN"
+    OUT = "OUT"
     END_GAME = "EG"
 
 
@@ -43,3 +60,11 @@ class PositionName(StrEnum):
     GUARD = "Guard"
     FORWARD = "Forward"
     CENTER = "Center"
+
+
+class Quarter(StrEnum):
+    FIRST = "First Quarter"
+    SECOND = "Second Quarter"
+    THIRD = "Third Quarter"
+    FOURTH = "Fourth Quarter"
+    EXTRA = "Extra Time"
