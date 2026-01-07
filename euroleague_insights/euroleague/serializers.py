@@ -31,6 +31,7 @@ class PlayerSerializer(serializers.Serializer):
     weight = serializers.IntegerField()
     birth_date = serializers.DateTimeField()
     current_club = serializers.CharField(allow_null=True, default=None)
+    type_name = serializers.CharField(max_length=30)
 
 
 class MatchSerializer(serializers.Serializer):

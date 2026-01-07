@@ -37,6 +37,7 @@ class Player(models.Model):
         null=True,
         blank=True,
     )
+    type_name = models.CharField(max_length=30, blank=True)
 
     def __str__(self):
         return self.fullname
