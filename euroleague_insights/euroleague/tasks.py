@@ -56,6 +56,7 @@ def insert_players(season_code):
                 "height": new_player_person.get("height", None),
                 "weight": new_player_person.get("weight", None),
                 "birth_date": new_player_person.get("birthDate", ""),
+                "type_name": new_player.get("typeName", ""),
             },
         )
 
