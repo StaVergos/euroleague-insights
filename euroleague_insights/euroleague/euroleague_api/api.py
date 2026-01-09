@@ -19,7 +19,7 @@ class EuroleagueAPI:
 
     @property
     def live_api(self) -> str:
-        return EuroleagueLive.value
+        return EuroleagueLive.URL.value
 
     def euroleague_2024_games_url(self) -> str:
         return (
