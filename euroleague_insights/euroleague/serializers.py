@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
 from euroleague_insights.euroleague.euroleague_api.constants import PlayType
 from euroleague_insights.euroleague.euroleague_api.constants import Quarter
-from euroleague_insights.euroleague.models import Play
 
 
 class ClubSerializer(serializers.Serializer):
@@ -63,7 +61,8 @@ class PlaySerializer(serializers.Serializer):
     play_type = serializers.ChoiceField(
         choices=[(pt.value, pt.value) for pt in PlayType],
     )
-    marker_time = serializers.TimeField()
+    game_minute = serializers.IntegerField(allow_null=True)
+    game_time = serializers.CharField()
     home_team_play_points = serializers.IntegerField(allow_null=True, default=None)
     away_team_play_points = serializers.IntegerField(allow_null=True, default=None)
     play_info = serializers.CharField(max_length=100)
