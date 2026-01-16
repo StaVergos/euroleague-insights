@@ -88,17 +88,20 @@ class Play(models.Model):
         choices=QUARTER_CHOICES,
         default=Quarter.FIRST.value,
     )
-    number_of_play = models.IntegerField(unique=True)
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True)
-    play_team = models.CharField(max_length=50)
+    number_of_play = models.PositiveIntegerField()
+    player = models.ForeignKey(
+        Player, on_delete=models.SET_NULL, max_length=50, null=True, blank=True
+    )
+    play_team = models.CharField(max_length=50, null=True)
     play_type = models.CharField(
         max_length=20,
         choices=PLAYTYPE_CHOICES,
         default=PlayType.BEGIN_PERIOD.value,
     )
-    marker_time = models.TimeField(blank=True)
-    home_team_play_points = models.IntegerField(null=True, default=None)
-    away_team_play_points = models.IntegerField(null=True, default=None)
+    game_minute = models.PositiveIntegerField(null=True, blank=True)
+    game_time = models.PositiveIntegerField(null=True, blank=True)
+    home_team_play_points = models.PositiveIntegerField(null=True, default=None)
+    away_team_play_points = models.PositiveIntegerField(null=True, default=None)
     play_info = models.CharField(max_length=100, blank=True)
 
     class Meta:
