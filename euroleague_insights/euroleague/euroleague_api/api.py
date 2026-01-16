@@ -4,7 +4,6 @@ from euroleague_insights.euroleague.euroleague_api.constants import CompetitionC
 from euroleague_insights.euroleague.euroleague_api.constants import EuroleagueApiUrl
 from euroleague_insights.euroleague.euroleague_api.constants import EuroleagueLive
 from euroleague_insights.euroleague.euroleague_api.constants import SeasonCode
-from euroleague_insights.euroleague.models import Match
 
 
 class EuroleagueAPI:
@@ -49,11 +48,18 @@ class EuroleagueAPI:
             f"/seasons/{self.season.value}/games"
         )
 
-    def euroleague_plays_url(self) -> str:
+    def euroleague_plays_url(self, game_code) -> str:
         return (
             f"{self.live_api}/PlaybyPlay"
-            f"?gamecode={Match.game_code}"
+            f"?gamecode={game_code}"
             f"&seasoncode={self.season.value}"
+        )
+
+    def euroleague_get_individual_player_url(self, person_code) -> str:
+        return (
+            f"{self.api_v2}"
+            f"/competitions/{CompetitionCode.EUROLEAGUE.value}"
+            f"/seasons/{self.season.value}/people/{person_code}"
         )
 
     def get_clubs(self):
@@ -71,7 +77,14 @@ class EuroleagueAPI:
         response.raise_for_status()
         return response.json()
 
-    def get_plays(self):
-        response = self.client.get(self.euroleague_plays_url())
+    def get_plays(self, game_code):
+        response = self.client.get(self.euroleague_plays_url(game_code))
+        response.raise_for_status()
+        return response.json()
+
+    def get_individual_player(self, person_code):
+        response = self.client.get(
+            self.euroleague_get_individual_player_url(person_code),
+        )
         response.raise_for_status()
         return response.json()
