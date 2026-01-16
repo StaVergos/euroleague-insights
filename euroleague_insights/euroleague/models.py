@@ -28,8 +28,8 @@ class Player(models.Model):
     jersey_name = models.CharField(max_length=50, null=True, blank=True)
     country_code = models.CharField(max_length=3)
     country_name = models.CharField(max_length=100)
-    height = models.IntegerField(null=True)
-    weight = models.IntegerField(null=True)
+    height = models.PositiveIntegerField(null=True)
+    weight = models.PositiveIntegerField(null=True)
     birth_date = models.DateTimeField(blank=True)
     current_club = models.ForeignKey(
         Club,
