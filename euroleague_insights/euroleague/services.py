@@ -44,5 +44,5 @@ def list_club_matches(club_code):
     ).order_by("round")
 
 
-def list_plays():
-    return Play.objects.order_by("number_of_play")
+def list_plays(game_code):
+    return Play.objects.filter(match__game_code=game_code).order_by("id")
