@@ -90,7 +90,11 @@ class Play(models.Model):
     )
     number_of_play = models.PositiveIntegerField()
     player = models.ForeignKey(
-        Player, on_delete=models.SET_NULL, max_length=50, null=True, blank=True
+        Player,
+        on_delete=models.SET_NULL,
+        max_length=50,
+        null=True,
+        blank=True,
     )
     play_team = models.CharField(max_length=50, null=True)
     play_type = models.CharField(
