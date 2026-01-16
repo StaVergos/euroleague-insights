@@ -56,17 +56,17 @@ class Match(models.Model):
         choices=PHASE_CHOICES,
         default=PhaseType.REGULAR_SEASON.value,
     )
-    round = models.IntegerField()
+    round = models.PositiveIntegerField()
     utc_date = models.DateTimeField()
     local_timezone = models.IntegerField()
     home_team_code = models.CharField(max_length=3)
     away_team_code = models.CharField(max_length=3)
     home_team = models.CharField(max_length=50)
     away_team = models.CharField(max_length=50)
-    home_score = models.IntegerField(null=True, default=None)
-    away_score = models.IntegerField(null=True, default=None)
+    home_score = models.PositiveIntegerField(null=True, default=None)
+    away_score = models.PositiveIntegerField(null=True, default=None)
     venue_name = models.CharField(max_length=100)
-    audience = models.IntegerField(null=True, default=None)
+    audience = models.PositiveIntegerField(null=True, default=None)
 
     def __str__(self):
         return self.match_id
