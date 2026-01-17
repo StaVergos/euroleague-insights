@@ -2,6 +2,7 @@ from django.db import models
 
 from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
 from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
 from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 
 
@@ -19,10 +20,19 @@ class Club(models.Model):
         return self.name
 
 
+POSITION_CHOICES = [(ps.value, ps.value) for ps in PositionName]
+
+
 class Player(models.Model):
     id = models.AutoField(primary_key=True)
     code = models.CharField(max_length=10, unique=True)
     fullname = models.CharField(max_length=50)
+    position = models.CharField(
+        max_length=20,
+        choices=POSITION_CHOICES,
+        default=PositionName.GUARD.value,
+        null=True,
+    )
     passport_name = models.CharField(max_length=50, blank=True)
     passport_surname = models.CharField(max_length=50, blank=True)
     jersey_name = models.CharField(max_length=50, null=True, blank=True)
@@ -41,6 +51,10 @@ class Player(models.Model):
 
     def __str__(self):
         return self.fullname
+
+    def set_position(self, position):
+        if isinstance(position, PositionName):
+            self.position = position.value
 
 
 PHASE_CHOICES = [(p.value, p.value) for p in PhaseType]

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
 from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
 from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 
 
@@ -20,6 +21,9 @@ class PlayerSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     code = serializers.CharField(max_length=10)
     fullname = serializers.CharField(max_length=50)
+    position = serializers.ChoiceField(
+        choices=[(ps.value, ps.value) for ps in PositionName],
+    )
     passport_name = serializers.CharField(max_length=50)
     passport_surname = serializers.CharField(max_length=50)
     jersey_name = serializers.CharField(max_length=50, allow_null=True, default=None)

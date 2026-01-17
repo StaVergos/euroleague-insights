@@ -4,6 +4,7 @@ from celery import shared_task
 
 from euroleague_insights.euroleague.euroleague_api.api import EuroleagueAPI
 from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
 from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 from euroleague_insights.euroleague.models import Club
 from euroleague_insights.euroleague.models import Match
@@ -12,6 +13,11 @@ from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
 
+position_map = {
+    "Guard": PositionName.GUARD.value,
+    "Forward": PositionName.FORWARD.value,
+    "Center": PositionName.CENTER.value,
+}
 quarter_map = {
     "FirstQuarter": Quarter.FIRST.value,
     "SecondQuarter": Quarter.SECOND.value,
@@ -105,6 +111,7 @@ def insert_players(season_code):
     for new_player in players_data:
         logger.info("Processing player: %s", new_player)
         new_player_person = new_player.get("person") or {}
+        position_value = new_player.get("positionName", None)
         country = new_player_person.get("country") or {}
         country_code = country.get("code", "")
         country_name = country.get("name", "")
@@ -112,6 +119,7 @@ def insert_players(season_code):
             code=new_player_person.get("code", ""),
             defaults={
                 "fullname": new_player_person.get("name", ""),
+                "position": position_map.get(position_value),
                 "passport_name": new_player_person.get("passportName", ""),
                 "passport_surname": new_player_person.get("passportSurname", ""),
                 "jersey_name": new_player_person.get("jerseyName", ""),
