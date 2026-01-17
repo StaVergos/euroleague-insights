@@ -4,6 +4,7 @@ from euroleague_insights.euroleague.views import ListClubMatchesView
 from euroleague_insights.euroleague.views import ListClubPlayersView
 from euroleague_insights.euroleague.views import ListClubsView
 from euroleague_insights.euroleague.views import ListMatchesView
+from euroleague_insights.euroleague.views import ListPlayByPlayView
 from euroleague_insights.euroleague.views import ListPlayersView
 
 urlpatterns = [
@@ -19,5 +20,10 @@ urlpatterns = [
         "matches/<str:club_code>/",
         ListClubMatchesView.as_view(),
         name="list-club-matches",
+    ),
+    path(
+        "playbyplay/<str:game_code>/",
+        ListPlayByPlayView.as_view(),
+        name="list-plays",
     ),
 ]
