@@ -66,7 +66,14 @@ class PlaySerializer(serializers.Serializer):
         choices=[(pt.value, pt.value) for pt in PlayType],
     )
     game_minute = serializers.IntegerField(allow_null=True)
-    game_time = serializers.CharField()
+    game_time = serializers.SerializerMethodField()
     home_team_play_points = serializers.IntegerField(allow_null=True, default=None)
     away_team_play_points = serializers.IntegerField(allow_null=True, default=None)
     play_info = serializers.CharField(max_length=100)
+
+    def get_game_time(self, obj):
+        if obj.game_time is None:
+            return None
+        minutes = obj.game_time // 60
+        seconds = obj.game_time % 60
+        return f"{minutes:02d}:{seconds:02d}"
