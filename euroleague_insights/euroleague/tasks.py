@@ -231,9 +231,9 @@ def get_match_plays(season_code):
     matches = Match.objects.filter().order_by(
         "utc_date",
     )
-    for match in matches:
-        logger.info("Inserting plays for match %s", match.game_code)
-        plays_data_raw = api.get_plays(game_code=match.game_code)
+    for match_obj in matches:
+        logger.info("Inserting plays for match %s", match_obj.game_code)
+        plays_data_raw = api.get_plays(game_code=match_obj.game_code)
         home_team_code = sanitize_value(plays_data_raw.get("CodeTeamA"))
         away_team_code = sanitize_value(plays_data_raw.get("CodeTeamB"))
         home_team = Club.objects.get(code=home_team_code)
@@ -246,4 +246,4 @@ def get_match_plays(season_code):
             quarter_data = plays_data_raw.get(quarter_key) or []
             logger.info("Processing %s plays in %s", len(quarter_data), quarter_name)
             for play in quarter_data:
-                insert_play.delay(play, season_code, match.id, quarter_name)
+                insert_play.delay(play, season_code, match_obj.id, quarter_name)
