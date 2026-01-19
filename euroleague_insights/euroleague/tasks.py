@@ -30,6 +30,8 @@ playtype_map = {pl.value: pl.name for pl in PlayType}
 
 MAX_SECONDS_IN_CLOCK = 59
 MAX_TOTAL_SECONDS = 600
+BEGIN_PERIOD_CLOCK = "10:00"
+END_PERIOD_CLOCK = "00:00"
 
 
 def sanitize_value(value: str) -> str | None:
@@ -52,6 +54,16 @@ def game_clock_to_seconds(clock):
     else:
         total_seconds = ""
     return total_seconds
+
+
+def set_game_clock(game_clock, play_type_code):
+    if game_clock:
+        return game_clock_to_seconds(game_clock)
+    if play_type_code == PlayType.BEGIN_PERIOD.value:
+        game_clock = game_clock_to_seconds(BEGIN_PERIOD_CLOCK)
+    elif play_type_code in (PlayType.END_PERIOD, PlayType.END_GAME):
+        game_clock = game_clock_to_seconds(END_PERIOD_CLOCK)
+    return game_clock
 
 
 def create_player(season_code, player_code):
@@ -201,10 +213,10 @@ def insert_play(play, season_code, match_id, quarter_name):
                 player = create_player(season_code, player_code)
     play_type_code = sanitize_value(play.get("PLAYTYPE", ""))
     play_info = playtype_map.get(play_type_code)
+    if not play_info:
+        play_info = sanitize_value(play.get("PLAYINFO", ""))
     get_markertime = sanitize_value(play.get("MARKERTIME", None))
-    game_seconds = None
-    if get_markertime:
-        game_seconds = game_clock_to_seconds(get_markertime)
+    game_seconds = set_game_clock(get_markertime, play_type_code)
     match_obj = Match.objects.filter(id=match_id).first()
     Play.objects.update_or_create(
         match=match_obj,
