@@ -202,10 +202,9 @@ def insert_play(play, season_code, match_id, quarter_name):
     play_type_code = sanitize_value(play.get("PLAYTYPE", ""))
     play_info = playtype_map.get(play_type_code)
     get_markertime = sanitize_value(play.get("MARKERTIME", None))
-    if get_markertime is not None:
+    game_seconds = None
+    if get_markertime:
         game_seconds = game_clock_to_seconds(get_markertime)
-    else:
-        game_seconds = None
     match_obj = Match.objects.filter(id=match_id).first()
     Play.objects.update_or_create(
         match=match_obj,
