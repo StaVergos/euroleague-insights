@@ -51,8 +51,6 @@ def game_clock_to_seconds(clock):
         if int(seconds) > MAX_SECONDS_IN_CLOCK or total_seconds > MAX_TOTAL_SECONDS:
             msg = "Seconds time limit"
             raise ValueError(msg)
-    else:
-        total_seconds = ""
     return total_seconds
 
 
