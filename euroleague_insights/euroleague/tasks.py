@@ -207,11 +207,14 @@ def insert_play(play, season_code, match_id, quarter_name):
     player_id = sanitize_value(play.get("PLAYER_ID"))
     if player_id:
         if player_id.startswith("P"):
-            player_code = player_id[1:]
-            logger.warning(player_code)
+            player_parts = player_id.split("P")
+            player_code = player_parts[1]
+            logger.info(player_code)
             player = Player.objects.filter(code=player_code).first()
             if not player:
                 player = create_player(season_code, player_code)
+        else:
+            player = None
     play_type_code = sanitize_value(play.get("PLAYTYPE", ""))
     play_info = playtype_map.get(play_type_code)
     if not play_info:
