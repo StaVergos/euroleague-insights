@@ -69,8 +69,9 @@ def set_game_clock(game_clock, play_type_code):
 def create_player(season_code, player_code):
     api = EuroleagueAPI(season=season_code)
     player_data = api.get_individual_player(player_code).get("data", [])
-    if len(player_data) == 0:
-        logger.info("No data found for player with id %s", player_code)
+    if len(player_data) != 1:
+        logger.error("No data found for player with id %s", player_code)
+        raise ValueError
     if len(player_data) == 1:
         new_player = player_data[0]
         new_player_person = new_player.get("person") or {}
