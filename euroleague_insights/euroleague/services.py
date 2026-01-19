@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from euroleague_insights.euroleague.models import Club
 from euroleague_insights.euroleague.models import Match
+from euroleague_insights.euroleague.models import Play
 from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ def list_clubs():
 
 
 def list_players():
-    return Player.objects.order_by("id")
+    return Player.objects.filter(type_name="Player").order_by("id")
 
 
 def list_club_players(club_code):
@@ -41,3 +42,7 @@ def list_club_matches(club_code):
     return Match.objects.filter(
         Q(home_team_code=club_code) | Q(away_team_code=club_code),
     ).order_by("round")
+
+
+def list_plays(game_code):
+    return Play.objects.filter(match__game_code=game_code).order_by("number_of_play")

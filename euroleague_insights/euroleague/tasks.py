@@ -3,11 +3,92 @@ import logging
 from celery import shared_task
 
 from euroleague_insights.euroleague.euroleague_api.api import EuroleagueAPI
+from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
+from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 from euroleague_insights.euroleague.models import Club
 from euroleague_insights.euroleague.models import Match
+from euroleague_insights.euroleague.models import Play
 from euroleague_insights.euroleague.models import Player
 
 logger = logging.getLogger(__name__)
+
+position_map = {
+    "Guard": PositionName.GUARD.value,
+    "Forward": PositionName.FORWARD.value,
+    "Center": PositionName.CENTER.value,
+}
+quarter_map = {
+    "FirstQuarter": Quarter.FIRST.value,
+    "SecondQuarter": Quarter.SECOND.value,
+    "ThirdQuarter": Quarter.THIRD.value,
+    "ForthQuarter": Quarter.FOURTH.value,
+    "ExtraTime": Quarter.EXTRA.value,
+}
+
+playtype_map = {pl.value: pl.name for pl in PlayType}
+
+MAX_SECONDS_IN_CLOCK = 59
+MAX_TOTAL_SECONDS = 600
+BEGIN_PERIOD_CLOCK = "10:00"
+END_PERIOD_CLOCK = "00:00"
+
+
+def sanitize_value(value: str) -> str | None:
+    sanitized_value = value.strip()
+    if sanitized_value == "":
+        return None
+    return sanitized_value
+
+
+def game_clock_to_seconds(clock):
+    if clock is not None:
+        minutes, seconds = clock.split(":")
+        total_seconds = int(minutes) * 60 + int(seconds)
+        if int(minutes) < 0 or int(seconds) < 0:
+            msg = "Minutes and seconds cannot be negative"
+            raise ValueError(msg)
+        if int(seconds) > MAX_SECONDS_IN_CLOCK or total_seconds > MAX_TOTAL_SECONDS:
+            msg = "Seconds time limit"
+            raise ValueError(msg)
+    return total_seconds
+
+
+def set_game_clock(game_clock, play_type_code):
+    if game_clock:
+        return game_clock_to_seconds(game_clock)
+    if play_type_code == PlayType.BEGIN_PERIOD.value:
+        game_clock = game_clock_to_seconds(BEGIN_PERIOD_CLOCK)
+    elif play_type_code in (PlayType.END_PERIOD, PlayType.END_GAME):
+        game_clock = game_clock_to_seconds(END_PERIOD_CLOCK)
+    return game_clock
+
+
+def create_player(season_code, player_code):
+    api = EuroleagueAPI(season=season_code)
+    player_data = api.get_individual_player(player_code).get("data", [])
+    if len(player_data) != 1:
+        logger.error("No data found for player with id %s", player_code)
+        raise ValueError
+    if len(player_data) == 1:
+        new_player = player_data[0]
+        new_player_person = new_player.get("person") or {}
+        country = new_player_person.get("country") or {}
+        Player.objects.get_or_create(
+            code=player_code,
+            defaults={
+                "fullname": new_player_person.get("name", ""),
+                "passport_name": new_player_person.get("passportName", ""),
+                "passport_surname": new_player_person.get("passportSurname", ""),
+                "jersey_name": new_player_person.get("jerseyName", ""),
+                "country_code": country.get("code", ""),
+                "country_name": country.get("name", ""),
+                "height": new_player_person.get("height", None),
+                "weight": new_player_person.get("weight", None),
+                "birth_date": new_player_person.get("birthDate", None),
+                "type_name": new_player.get("typeName", ""),
+            },
+        )
 
 
 @shared_task()
@@ -41,6 +122,7 @@ def insert_players(season_code):
     for new_player in players_data:
         logger.info("Processing player: %s", new_player)
         new_player_person = new_player.get("person") or {}
+        position_value = new_player.get("positionName", None)
         country = new_player_person.get("country") or {}
         country_code = country.get("code", "")
         country_name = country.get("name", "")
@@ -48,6 +130,7 @@ def insert_players(season_code):
             code=new_player_person.get("code", ""),
             defaults={
                 "fullname": new_player_person.get("name", ""),
+                "position": position_map.get(position_value),
                 "passport_name": new_player_person.get("passportName", ""),
                 "passport_surname": new_player_person.get("passportSurname", ""),
                 "jersey_name": new_player_person.get("jerseyName", ""),
@@ -56,6 +139,7 @@ def insert_players(season_code):
                 "height": new_player_person.get("height", None),
                 "weight": new_player_person.get("weight", None),
                 "birth_date": new_player_person.get("birthDate", ""),
+                "type_name": new_player.get("typeName", ""),
             },
         )
 
@@ -113,3 +197,66 @@ def insert_matches(season_code):
                 "audience": new_match.get("audience", 0),
             },
         )
+
+
+@shared_task()
+def insert_play(play, season_code, match_id, quarter_name):
+    player = None
+    player_id = sanitize_value(play.get("PLAYER_ID"))
+    if player_id:
+        if player_id.startswith("P"):
+            player_parts = player_id.split("P")
+            player_code = player_parts[1]
+            logger.info(player_code)
+            player = Player.objects.filter(code=player_code).first()
+            if not player:
+                player = create_player(season_code, player_code)
+        else:
+            player = None
+    play_type_code = sanitize_value(play.get("PLAYTYPE", ""))
+    play_info = playtype_map.get(play_type_code)
+    if not play_info:
+        play_info = sanitize_value(play.get("PLAYINFO", ""))
+    get_markertime = sanitize_value(play.get("MARKERTIME", None))
+    game_seconds = set_game_clock(get_markertime, play_type_code)
+    match_obj = Match.objects.filter(id=match_id).first()
+    Play.objects.update_or_create(
+        match=match_obj,
+        quarter=quarter_name,
+        number_of_play=play.get("NUMBEROFPLAY", 0),
+        defaults={
+            "play_team": play.get("TEAM", 0),
+            "player": player,
+            "play_type": play_type_code,
+            "game_minute": play.get("MINUTE", 0),
+            "game_time": game_seconds,
+            "home_team_play_points": play.get("POINTS_A", 0),
+            "away_team_play_points": play.get("POINTS_B", 0),
+            "play_info": play_info,
+        },
+    )
+    logger.warning(play)
+
+
+@shared_task(soft_time_limit=1000, time_limit=1200)
+def get_match_plays(season_code):
+    api = EuroleagueAPI(season=season_code)
+    matches = Match.objects.filter().order_by(
+        "utc_date",
+    )
+    for match_obj in matches:
+        logger.info("Inserting plays for match %s", match_obj.game_code)
+        plays_data_raw = api.get_plays(game_code=match_obj.game_code)
+        home_team_code = sanitize_value(plays_data_raw.get("CodeTeamA"))
+        away_team_code = sanitize_value(plays_data_raw.get("CodeTeamB"))
+        home_team = Club.objects.get(code=home_team_code)
+        if not home_team:
+            raise ValueError
+        away_team = Club.objects.get(code=away_team_code)
+        if not away_team:
+            raise ValueError
+        for quarter_key, quarter_name in quarter_map.items():
+            quarter_data = plays_data_raw.get(quarter_key) or []
+            logger.info("Processing %s plays in %s", len(quarter_data), quarter_name)
+            for play in quarter_data:
+                insert_play.delay(play, season_code, match_obj.id, quarter_name)

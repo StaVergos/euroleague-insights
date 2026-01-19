@@ -1,6 +1,9 @@
 from django.db import models
 
 from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
+from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
+from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 
 
 class Club(models.Model):
@@ -17,17 +20,26 @@ class Club(models.Model):
         return self.name
 
 
+POSITION_CHOICES = [(ps.value, ps.value) for ps in PositionName]
+
+
 class Player(models.Model):
     id = models.AutoField(primary_key=True)
     code = models.CharField(max_length=10, unique=True)
     fullname = models.CharField(max_length=50)
+    position = models.CharField(
+        max_length=20,
+        choices=POSITION_CHOICES,
+        default=PositionName.GUARD.value,
+        null=True,
+    )
     passport_name = models.CharField(max_length=50, blank=True)
     passport_surname = models.CharField(max_length=50, blank=True)
     jersey_name = models.CharField(max_length=50, null=True, blank=True)
     country_code = models.CharField(max_length=3)
     country_name = models.CharField(max_length=100)
-    height = models.IntegerField(null=True)
-    weight = models.IntegerField(null=True)
+    height = models.PositiveIntegerField(null=True)
+    weight = models.PositiveIntegerField(null=True)
     birth_date = models.DateTimeField(blank=True)
     current_club = models.ForeignKey(
         Club,
@@ -35,9 +47,14 @@ class Player(models.Model):
         null=True,
         blank=True,
     )
+    type_name = models.CharField(max_length=30, blank=True)
 
     def __str__(self):
         return self.fullname
+
+    def set_position(self, position):
+        if isinstance(position, PositionName):
+            self.position = position.value
 
 
 PHASE_CHOICES = [(p.value, p.value) for p in PhaseType]
@@ -53,17 +70,17 @@ class Match(models.Model):
         choices=PHASE_CHOICES,
         default=PhaseType.REGULAR_SEASON.value,
     )
-    round = models.IntegerField()
+    round = models.PositiveIntegerField()
     utc_date = models.DateTimeField()
     local_timezone = models.IntegerField()
     home_team_code = models.CharField(max_length=3)
     away_team_code = models.CharField(max_length=3)
     home_team = models.CharField(max_length=50)
     away_team = models.CharField(max_length=50)
-    home_score = models.IntegerField(null=True, default=None)
-    away_score = models.IntegerField(null=True, default=None)
+    home_score = models.PositiveIntegerField(null=True, default=None)
+    away_score = models.PositiveIntegerField(null=True, default=None)
     venue_name = models.CharField(max_length=100)
-    audience = models.IntegerField(null=True, default=None)
+    audience = models.PositiveIntegerField(null=True, default=None)
 
     def __str__(self):
         return self.match_id
@@ -71,3 +88,55 @@ class Match(models.Model):
     def set_phase_type(self, phase_type):
         if isinstance(phase_type, PhaseType):
             self.phase = phase_type.value
+
+
+PLAYTYPE_CHOICES = [(pt.value, pt.value) for pt in PlayType]
+QUARTER_CHOICES = [(q.value, q.value) for q in Quarter]
+
+
+class Play(models.Model):
+    id = models.AutoField(primary_key=True)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name="team_play")
+    quarter = models.CharField(
+        max_length=20,
+        choices=QUARTER_CHOICES,
+        default=Quarter.FIRST.value,
+    )
+    number_of_play = models.PositiveIntegerField()
+    player = models.ForeignKey(
+        Player,
+        on_delete=models.SET_NULL,
+        max_length=50,
+        null=True,
+        blank=True,
+    )
+    play_team = models.CharField(max_length=50, null=True)
+    play_type = models.CharField(
+        max_length=20,
+        choices=PLAYTYPE_CHOICES,
+        default=PlayType.BEGIN_PERIOD.value,
+    )
+    game_minute = models.PositiveIntegerField(null=True, blank=True)
+    game_time = models.PositiveIntegerField(null=True, blank=True)
+    home_team_play_points = models.PositiveIntegerField(null=True, default=None)
+    away_team_play_points = models.PositiveIntegerField(null=True, default=None)
+    play_info = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["match", "number_of_play"],
+                name="unique_play_per_match",
+            ),
+        ]
+
+    def __str__(self):
+        return f"Play {self.number_of_play} in Match {self.match.game_code}"
+
+    def set_play_type(self, play_type):
+        if isinstance(play_type, PlayType):
+            self.play_type = play_type.value
+
+    def set_quarter(self, quarter):
+        if isinstance(quarter, Quarter):
+            self.quarter = quarter.value

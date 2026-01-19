@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
 from euroleague_insights.euroleague.euroleague_api.constants import PhaseType
+from euroleague_insights.euroleague.euroleague_api.constants import PlayType
+from euroleague_insights.euroleague.euroleague_api.constants import PositionName
+from euroleague_insights.euroleague.euroleague_api.constants import Quarter
 
 
 class ClubSerializer(serializers.Serializer):
@@ -18,6 +21,9 @@ class PlayerSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     code = serializers.CharField(max_length=10)
     fullname = serializers.CharField(max_length=50)
+    position = serializers.ChoiceField(
+        choices=[(ps.value, ps.value) for ps in PositionName],
+    )
     passport_name = serializers.CharField(max_length=50)
     passport_surname = serializers.CharField(max_length=50)
     jersey_name = serializers.CharField(max_length=50, allow_null=True, default=None)
@@ -27,6 +33,7 @@ class PlayerSerializer(serializers.Serializer):
     weight = serializers.IntegerField()
     birth_date = serializers.DateTimeField()
     current_club = serializers.CharField(allow_null=True, default=None)
+    type_name = serializers.CharField(max_length=30)
 
 
 class MatchSerializer(serializers.Serializer):
@@ -46,3 +53,27 @@ class MatchSerializer(serializers.Serializer):
     away_score = serializers.IntegerField(allow_null=True, default=None)
     venue_name = serializers.CharField(max_length=100)
     audience = serializers.IntegerField(allow_null=True, default=None)
+
+
+class PlaySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    match = serializers.CharField()
+    quarter = serializers.ChoiceField(choices=[(q.value, q.value) for q in Quarter])
+    number_of_play = serializers.IntegerField()
+    player = serializers.CharField(max_length=50)
+    play_team = serializers.CharField(max_length=50)
+    play_type = serializers.ChoiceField(
+        choices=[(pt.value, pt.value) for pt in PlayType],
+    )
+    game_minute = serializers.IntegerField(allow_null=True)
+    game_time = serializers.SerializerMethodField()
+    home_team_play_points = serializers.IntegerField(allow_null=True, default=None)
+    away_team_play_points = serializers.IntegerField(allow_null=True, default=None)
+    play_info = serializers.CharField(max_length=100)
+
+    def get_game_time(self, obj):
+        if obj.game_time is None:
+            return None
+        minutes = obj.game_time // 60
+        seconds = obj.game_time % 60
+        return f"{minutes:02d}:{seconds:02d}"

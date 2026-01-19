@@ -4,11 +4,13 @@ from rest_framework.views import Response
 from euroleague_insights.euroleague.serializers import ClubSerializer
 from euroleague_insights.euroleague.serializers import MatchSerializer
 from euroleague_insights.euroleague.serializers import PlayerSerializer
+from euroleague_insights.euroleague.serializers import PlaySerializer
 from euroleague_insights.euroleague.services import list_club_matches
 from euroleague_insights.euroleague.services import list_club_players
 from euroleague_insights.euroleague.services import list_clubs
 from euroleague_insights.euroleague.services import list_matches
 from euroleague_insights.euroleague.services import list_players
+from euroleague_insights.euroleague.services import list_plays
 
 
 class ListClubsView(APIView):
@@ -63,4 +65,15 @@ class ListClubMatchesView(APIView):
     def get(self, request, club_code):
         matches = list_club_matches(club_code)
         serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+
+class ListPlayByPlayView(APIView):
+    """
+    API view to list play by play
+    """
+
+    def get(self, request, game_code):
+        plays = list_plays(game_code)
+        serializer = PlaySerializer(plays, many=True)
         return Response(serializer.data)
