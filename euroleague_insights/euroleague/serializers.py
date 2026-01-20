@@ -33,7 +33,7 @@ class PlayerSerializer(serializers.Serializer):
     weight = serializers.IntegerField()
     birth_date = serializers.DateTimeField()
     current_club = serializers.CharField(allow_null=True, default=None)
-    type_name = serializers.CharField(max_length=30)
+    role = serializers.CharField(max_length=30)
 
 
 class MatchSerializer(serializers.Serializer):
@@ -67,8 +67,8 @@ class PlaySerializer(serializers.Serializer):
     )
     game_minute = serializers.IntegerField(allow_null=True)
     game_time = serializers.SerializerMethodField()
-    home_team_play_points = serializers.IntegerField(allow_null=True, default=None)
-    away_team_play_points = serializers.IntegerField(allow_null=True, default=None)
+    home_team_points = serializers.IntegerField(allow_null=True, default=None)
+    away_team_points = serializers.IntegerField(allow_null=True, default=None)
     play_info = serializers.CharField(max_length=100)
 
     def get_game_time(self, obj):

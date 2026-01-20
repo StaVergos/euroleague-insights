@@ -47,7 +47,7 @@ class Player(models.Model):
         null=True,
         blank=True,
     )
-    type_name = models.CharField(max_length=30, blank=True)
+    role = models.CharField(max_length=30, blank=True)
 
     def __str__(self):
         return self.fullname
@@ -118,8 +118,8 @@ class Play(models.Model):
     )
     game_minute = models.PositiveIntegerField(null=True, blank=True)
     game_time = models.PositiveIntegerField(null=True, blank=True)
-    home_team_play_points = models.PositiveIntegerField(null=True, default=None)
-    away_team_play_points = models.PositiveIntegerField(null=True, default=None)
+    home_team_points = models.PositiveIntegerField(null=True, default=None)
+    away_team_points = models.PositiveIntegerField(null=True, default=None)
     play_info = models.CharField(max_length=100, blank=True)
 
     class Meta:
