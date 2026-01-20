@@ -1,5 +1,6 @@
-from django.core.management.base import BaseCommand
 from celery import chain
+from django.core.management.base import BaseCommand
+
 from euroleague_insights.euroleague.tasks import get_match_plays
 from euroleague_insights.euroleague.tasks import insert_clubs
 from euroleague_insights.euroleague.tasks import insert_matches
