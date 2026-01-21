@@ -8,6 +8,7 @@ from euroleague_insights.euroleague.serializers import PlaySerializer
 from euroleague_insights.euroleague.services import list_club_matches
 from euroleague_insights.euroleague.services import list_club_players
 from euroleague_insights.euroleague.services import list_clubs
+from euroleague_insights.euroleague.services import list_match_top_scorers
 from euroleague_insights.euroleague.services import list_matches
 from euroleague_insights.euroleague.services import list_players
 from euroleague_insights.euroleague.services import list_plays
@@ -77,3 +78,13 @@ class ListPlayByPlayView(APIView):
         plays = list_plays(game_code)
         serializer = PlaySerializer(plays, many=True)
         return Response(serializer.data)
+
+
+class ListMatchTopScorersView(APIView):
+    """
+    API view to list top 10 scorers
+    """
+
+    def get(self, request, game_code):
+        top_scorers = list_match_top_scorers(game_code)
+        return Response(top_scorers)
